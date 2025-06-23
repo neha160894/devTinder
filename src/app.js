@@ -4,14 +4,11 @@ const User = require("./models/user");
 
 const app = express();
 
+app.use(express.json()); // middleware to convert incoming json from api to JS object
+
 app.post("/signup", async (req, res) => {
     // creating a new instance of user model
-    const user = new User({
-        firstName: "Neha",
-        lastName: "Kashyap",
-        emailId: "kashyapneha84@gmail.com",
-        password: "neha@123" 
-    });
+    const user = new User(req.body);
 
     try {
         await user.save();
@@ -20,6 +17,31 @@ app.post("/signup", async (req, res) => {
         res.status(400).send("Error saving the user: " + err.message);
     }
     
+});
+
+// ger user by email
+app.get("/user", async (req, res) => {
+    const userEmail = req.body.emailId;
+    try {
+        const users = await User.find({ emailId: userEmail });
+        if (users.length === 0) {
+            res.status(404).send("User not found");
+        } else {
+            res.send(users);
+        }
+    } catch (err) {
+        res.status(400).send("Something went wrong...")
+    }
+})
+
+// feed API - GET /feed - get all the users from the database
+app.get("/feed", async (req, res) => {
+    try {
+        const users = await User.find({});
+        res.send(users);
+    } catch (err) {
+        res.status(400).send("Something went wrong...")
+    }
 });
 
 connectDB().then(() => {
