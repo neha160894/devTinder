@@ -30,4 +30,12 @@ const validateEditProfileData = (req) => {
     return isEditAllowed;
 };
 
-module.exports = { validateSignUpData, validateEditProfileData };
+const validatePassword = (req) => {
+    const allowedEditField = "password";
+
+    const isEditAllowed = (req.body.password === allowedEditField) && true;
+
+    return isEditAllowed;
+};
+
+module.exports = { validateSignUpData, validateEditProfileData, validatePassword };
